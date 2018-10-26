@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-               addBtn.setEnabled(TextUtils.isEmpty(editable));
+               addBtn.setEnabled(!TextUtils.isEmpty(editable));
             }
         });
         name.setOnClickListener(new View.OnClickListener() {
