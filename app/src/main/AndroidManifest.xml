@@ -4,7 +4,7 @@
     package="carbit3333333.gmail.com.moneytracker">
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -12,7 +12,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity android:name=".MainActivity" />
-        <activity android:name=".AddItemActivity">
+        <activity android:name=".AddItemActivity"
+            android:title = "@string/activity_itemlist_title">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
