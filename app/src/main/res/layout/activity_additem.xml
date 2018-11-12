@@ -5,42 +5,60 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".AddItemActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="8dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="68dp">
+
+
         <LinearLayout
-            android:paddingLeft="22dp"
-            android:paddingRight="22dp"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:background="@color/white"
+            android:elevation="2dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="68dp">
-                <EditText
-                    android:id="@+id/name"
-                    android:background="@null"
-                    android:inputType="text"
-                    android:hint="Название"
-                    android:maxLines="1"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <EditText
-                    android:id="@+id/price"
-                    android:gravity="right"
-                    android:layout_marginLeft="8dp"
-                    android:background="@null"
-                    android:maxLines="1"
-                    android:hint="0₽"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:enabled= "false"
-                    android:id="@+id/add_btn"
-                    android:layout_marginLeft="22dp"
-                    android:background="@drawable/ic_add"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp" />
+            android:paddingLeft="22dp"
+            android:paddingRight="22dp">
+
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="Название"
+                android:inputType="text"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:gravity="right"
+                android:hint="0₽"
+                android:maxLines="1" />
+
+            <Button
+                android:id="@+id/add_btn"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginLeft="22dp"
+                android:background="@drawable/ic_add" />
 
         </LinearLayout>
+    </android.support.v7.widget.CardView>
 
 
 </LinearLayout>

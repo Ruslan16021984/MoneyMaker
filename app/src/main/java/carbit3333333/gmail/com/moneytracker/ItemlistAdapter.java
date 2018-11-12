@@ -12,10 +12,11 @@ import java.util.List;
 
 class ItemlistAdapter extends RecyclerView.Adapter<ItemlistAdapter.RecordViewHolder>{
 
-    private List<Record> data = new ArrayList<>();
+    private List<Item> data = new ArrayList<>();
 
-    public ItemlistAdapter() {
-        createData();
+    public void setData(List<Item>data){
+        this.data = data;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -29,14 +30,22 @@ class ItemlistAdapter extends RecyclerView.Adapter<ItemlistAdapter.RecordViewHol
 
     @Override
     public void onBindViewHolder(@NonNull ItemlistAdapter.RecordViewHolder holder, int position) {
-        Record record = data.get(position);
-        holder.eplayData(record);
+        Item item = data.get(position);
+        holder.eplayData(item);
     }
 
     @Override
     public int getItemCount() {
         return data.size();
     }
+
+    public void addItem(Item item) {
+        data.add(item);
+        notifyItemInserted(data.size());
+
+    }
+
+
     static class RecordViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
         private final TextView price;
@@ -46,21 +55,9 @@ class ItemlistAdapter extends RecyclerView.Adapter<ItemlistAdapter.RecordViewHol
             title =itemView.findViewById(R.id.title);
             price =itemView.findViewById(R.id.price);
         }
-        public void eplayData(Record record){
-            title.setText(record.getTitle());
-            price.setText(String.valueOf(record.getPrice()));
+        public void eplayData(Item item){
+            title.setText(item.name);
+            price.setText(item.price);
         }
-    }
-    private void createData() {
-        data.add(new Record("Milk", 23));
-        data.add(new Record("Bread", 1));
-        data.add(new Record("Life", 14));
-        data.add(new Record("Snow", 100));
-        data.add(new Record("Book", 11));
-        data.add(new Record("macBook", 2000));
-        data.add(new Record("Lego one hondred socol", 400));
-        data.add(new Record("noutbook", 2000));
-        data.add(new Record("Шоколадка", 4));
-        data.add(new Record("Шкаф", 1445));
     }
 }

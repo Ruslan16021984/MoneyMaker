@@ -7,9 +7,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
-    private static final int PAGE_INCOMES =0;
-    private static final int PAGE_EXPENSES =1;
-    private static final int PAGE_BALANCE =2;
+    public static final int PAGE_INCOMES =0;
+    public static final int PAGE_EXPENSES =1;
+    public static final int PAGE_BALANCE =2;
     private String[]title;
     public MainPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
@@ -21,14 +21,14 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         switch (position){
             case PAGE_INCOMES:{
 
-                return ItemsFragment.createItemFragment(ItemsFragment.TYPE_INCOMES);
+                return ItemsFragment.createItemFragment(Item.TYPE_INCOMES);
             }
 
             case PAGE_EXPENSES:{
-                return ItemsFragment.createItemFragment(ItemsFragment.TYPE_EXPENSES);
+                return ItemsFragment.createItemFragment(Item.TYPE_EXPENSES);
             }
             case PAGE_BALANCE:
-                return null;
+                return new BalanceFragment();
                 default:
                     return null;
         }
@@ -36,7 +36,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     }
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
     @Nullable
     @Override
