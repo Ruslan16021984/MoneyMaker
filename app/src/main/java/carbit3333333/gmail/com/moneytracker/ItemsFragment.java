@@ -7,9 +7,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,6 +46,7 @@ public class ItemsFragment extends Fragment {
     private RecyclerView reciklerView;
     private ItemlistAdapter adapter;
     private Api api;
+    private App app;
     SwipeRefreshLayout refreshLayout;
 
 
@@ -48,13 +54,15 @@ public class ItemsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         adapter = new ItemlistAdapter();
+        adapter.setListener(new AdapterListener());
         Bundle bundle = getArguments();
         type = bundle.getString(TYPE_KEY, Item.TYPE_EXPENSES);
 
         if (type.equals(Item.TYPE_UNKNOWN)) {
             throw new IllegalArgumentException("Unknown type");
         }
-        api = ((App) getActivity().getApplication()).getApi();
+        app = ((App) getActivity().getApplication());
+        api = app.getApi();
     }
 
     @Nullable
@@ -100,15 +108,113 @@ public class ItemsFragment extends Fragment {
         });
 
     }
+    private void addItem(final Item item){
+        Call<AddItemREsult> call= api.addItem(item.price, item.name, item.type);
+        call.enqueue(new Callback<AddItemREsult>() {
+            @Override
+            public void onResponse(Call<AddItemREsult> call, Response<AddItemREsult> response) {
+               AddItemREsult result = response.body();
+               if(result.status.equals("success")){
+                   adapter.addItem(item);
+               }
+            }
+
+            @Override
+            public void onFailure(Call<AddItemREsult> call, Throwable t) {
+
+            }
+        });
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ADD_ITEM_REQEST_CODE && resultCode == Activity.RESULT_OK) {
             Item item = (Item) data.getParcelableExtra("item");
             if (item.type.equals(type)) {
-                adapter.addItem(item);
+            //    adapter.addItem(item);
+                addItem(item);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // ACTIOMODE*/--------------------------------------------------------------------------
+    private ActionMode actionMode = null;
+
+    private void removeSelectedItem() {
+        for (int i = adapter.getSelectedItems().size() - 1; i >= 0; i--) {
+            adapter.remove(adapter.getSelectedItems().get(i));
+        }
+        actionMode.finish();
+    }
+
+    private class AdapterListener implements ItemsAdapterListener {
+
+        @Override
+        public void onItemClick(Item item, int position) {
+            if (isInActionMode()) {
+                toogleSelection(position);
+            }
+        }
+
+
+        @Override
+        public void onItemLongClick(Item item, int position) {
+            if (isInActionMode()) {
+                return;
+            }
+            actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(actionModeCallback);
+            toogleSelection(position);
+        }
+
+        private boolean isInActionMode() {
+            return actionMode != null;
+        }
+
+        private void toogleSelection(int position) {
+            adapter.toggleSelection(position);
+
+        }
+
+        private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                MenuInflater inflater = new MenuInflater(getContext());
+                inflater.inflate(R.menu.items_menu, menu);
+
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.remove:
+                        showDialog();
+                        //removeSelectedItem();
+                        break;
+                }
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                actionMode = null;
+                adapter.clearSelection();
+            }
+
+
+        };
+
+
+    }
+
+    private void showDialog() {
+        ConfirmDialig dialig = new ConfirmDialig();
+        dialig.show(getFragmentManager(),"ConfirmDialog");
     }
 }

@@ -2,6 +2,7 @@ package carbit3333333.gmail.com.moneytracker;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ItemlistAdapter extends RecyclerView.Adapter<ItemlistAdapter.RecordViewHolder>{
+    private ItemsAdapterListener listener =null;
+
+    public void setListener(ItemsAdapterListener listener){
+        this.listener = listener;
+    }
 
     private List<Item> data = new ArrayList<>();
 
@@ -31,12 +37,40 @@ class ItemlistAdapter extends RecyclerView.Adapter<ItemlistAdapter.RecordViewHol
     @Override
     public void onBindViewHolder(@NonNull ItemlistAdapter.RecordViewHolder holder, int position) {
         Item item = data.get(position);
-        holder.eplayData(item);
+        holder.bind(item, position,  listener, selections.get(position, false));
     }
 
     @Override
     public int getItemCount() {
         return data.size();
+    }
+    private SparseBooleanArray selections = new SparseBooleanArray();
+    public void toggleSelection(int position){
+        if ((selections.get(position, false))){
+            selections.delete(position);
+        }else {
+            selections.put(position, true);
+        }
+        notifyItemChanged(position);
+    }
+    void clearSelection() {
+        selections.clear();
+        notifyDataSetChanged();
+    }
+    int getSelectedItemCount(){
+        return selections.size();
+    }
+    public List<Integer> getSelectedItems(){
+        List<Integer> items = new ArrayList<>(selections.size());
+        for (int i=0; i< selections.size(); i++ ){
+            items.add(selections.keyAt(i));
+        }
+        return items;
+    }
+    Item remove(int pos){
+        final Item item = data.remove(pos);
+        notifyItemRemoved(pos);
+        return item;
     }
 
     public void addItem(Item item) {
@@ -55,9 +89,27 @@ class ItemlistAdapter extends RecyclerView.Adapter<ItemlistAdapter.RecordViewHol
             title =itemView.findViewById(R.id.title);
             price =itemView.findViewById(R.id.price);
         }
-        public void eplayData(Item item){
+        public void bind(final Item item, final int position, final ItemsAdapterListener listener, boolean selected){
             title.setText(item.name);
             price.setText(item.price);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null){
+                        listener.onItemClick(item, position);
+                    }
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (listener != null){
+                        listener.onItemLongClick(item, position);
+                    }
+                    return true;
+                }
+            });
+            itemView.setActivated(selected);
         }
     }
 }
